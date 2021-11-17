@@ -6,10 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     private bool isOnGround = true;
 
-    private float speed = 2;
-    private float jumpForce = 5;
-    private float zBound = 6.0f;
-    private float xBound = 9.125f;
+    private Touch touch;
+
+    private float speed = 5.0f;
+    private float jumpForce = 5.0f;
+    private float zBound = 0;
 
     private Rigidbody playerRb;
     // Start is called before the first frame update
@@ -22,22 +23,22 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         MovePlayer();
-        ConstrainPlayerPosition();
     }
 
     void MovePlayer()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
-        {
-            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOnGround = false;
-        }
-
-        playerRb.AddForce(Vector3.forward * speed * verticalInput);
+        float horizontalInput = Input.acceleration.x;
         playerRb.AddForce(Vector3.right * speed * horizontalInput);
+
+        if(Input.touchCount > 0)
+        {
+            touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began && isOnGround)
+            {
+                playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                isOnGround = false;
+            }
+        }
     }
 
     void ConstrainPlayerPosition()
@@ -64,36 +65,4 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Powerup 1"))
-        {
-            Destroy(other.gameObject);
-            p1();
-        }
-        if (other.gameObject.CompareTag("Powerup 2"))
-        {
-            Destroy(other.gameObject);
-            p2();
-        }
-    }
-
-    IEnumerator PowerupConutdown()
-    {
-        yield return new WaitForSeconds(7);
-        speed = 2;
-        jumpForce = 5;
-    }
-
-    private void p1()
-    {
-        speed = 3;
-        StartCoroutine(PowerupConutdown());
-    }
-    private void p2()
-    {
-        jumpForce = 7;
-        StartCoroutine(PowerupConutdown());
-    } 
 }
