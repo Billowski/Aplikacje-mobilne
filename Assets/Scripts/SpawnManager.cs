@@ -5,49 +5,51 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject[] enemies;
-    public GameObject[] powerups;
 
-    private float zSpawn = 8.0f;
-    private float xEnemySpawnRange = 9.0f;
-    private float xPowerupSpawnRange = 8.0f;
+    private PlayerController playerControllerScript;
 
-    private float enemySpawnTime = 3.0f;
-    private float enemyDelay = 3.0f;
-    private float powerupSpawnTime = 22.5f;
-    private float powerupDelay = 13.5f;
-    // Start is called before the first frame update
+    private float zSpawn = 65.0f;
+    private float xRandom = 0.0f;
+    private float yPos = 0.0f;
+    private float xEnemySpawnRange = 8.0f;
+
+    private float enemySpawnTime = 2.0f;
+    private float enemyDelay = 2.0f;
+
+
     void Start()
     {
+        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
         SpawnEnemy();
         InvokeRepeating("SpawnEnemy", enemyDelay, enemySpawnTime);
-        InvokeRepeating("SpawnPowerup", powerupDelay, powerupSpawnTime);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     void SpawnEnemy()
     {
-        float randomX = 0;
         int randomIndex = Random.Range(0, enemies.Length);
-        if (randomIndex == 0) {
-            randomX = Random.Range(-xEnemySpawnRange, xEnemySpawnRange);
+
+        switch (randomIndex)
+        {
+            case 0:
+                xRandom = 0;
+                yPos = 0.5f;
+                break;
+            case 1:
+                xRandom = Random.Range(-xEnemySpawnRange + 2, xEnemySpawnRange - 2);
+                yPos = 1.5f;
+                break;
+            case 2:
+                xRandom = Random.Range(-xEnemySpawnRange + 1, xEnemySpawnRange - 1);
+                yPos = 1.5f;
+                break;
         }
-        Vector3 spawnPos = new Vector3(randomX, 0, zSpawn);
+        
+        Vector3 spawnPos = new Vector3(xRandom, yPos, zSpawn);
 
-        Instantiate(enemies[randomIndex], spawnPos, enemies[randomIndex].transform.rotation);
-    }
-
-    void SpawnPowerup()
-    {
-        float randomX = Random.Range(-xPowerupSpawnRange, xPowerupSpawnRange);
-        int randomIndex = Random.Range(0, powerups.Length);
-
-        Vector3 spawnPos = new Vector3(randomX, 0.5f, zSpawn);
-
-        Instantiate(powerups[randomIndex], spawnPos, powerups[randomIndex].transform.rotation);
+        if (playerControllerScript.gameOver == false)
+        {
+            Instantiate(enemies[randomIndex], spawnPos, enemies[randomIndex].transform.rotation);
+        }
     }
 }

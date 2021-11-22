@@ -4,19 +4,24 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool gameOver = false;
+
+    public ParticleSystem dirtParticle;
+
     private bool isOnGround = true;
 
+    private Rigidbody playerRb;
+    private Animator playerAnim;
     private Touch touch;
 
-    private float speed = 5.0f;
+    private float speed = 100.0f;
     private float jumpForce = 5.0f;
-    private float zBound = 0;
 
-    private Rigidbody playerRb;
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
+        playerAnim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -37,20 +42,9 @@ public class PlayerController : MonoBehaviour
             {
                 playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 isOnGround = false;
+                dirtParticle.Stop();
+                playerAnim.SetTrigger("Jump_trig");
             }
-        }
-    }
-
-    void ConstrainPlayerPosition()
-    {
-        if (transform.position.z < -zBound)
-        {
-            Destroy(gameObject);
-        }
-        if (transform.position.z > zBound)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, zBound);
-            playerRb.velocity = (Vector3.back * 3) + (Vector3.right * playerRb.velocity.x);
         }
     }
 
@@ -59,10 +53,14 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            dirtParticle.Play();
         }
-        if(collision.gameObject.CompareTag("Enemy 2"))
+        if(collision.gameObject.CompareTag("Enemy"))
         {
-            Destroy(gameObject);
+            gameOver = true;
+            dirtParticle.Stop();
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
         }
     }
 }
