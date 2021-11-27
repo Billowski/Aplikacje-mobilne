@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnim;
     private Touch touch;
 
-    private float speed = 100.0f;
+    private float speed = 500.0f;
     private float jumpForce = 5.0f;
 
     // Start is called before the first frame update
@@ -32,25 +32,28 @@ public class PlayerController : MonoBehaviour
 
     void MovePlayer()
     {
-        float horizontalInput = Input.acceleration.x;
-        playerRb.AddForce(Vector3.right * speed * horizontalInput);
-
-        if(Input.touchCount > 0)
+        if (!gameOver)
         {
-            touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began && isOnGround)
+            float horizontalInput = Input.acceleration.x;
+            playerRb.AddForce(Vector3.right * speed * horizontalInput);
+
+            if (Input.touchCount > 0)
             {
-                playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                isOnGround = false;
-                dirtParticle.Stop();
-                playerAnim.SetTrigger("Jump_trig");
+                touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Began && isOnGround)
+                {
+                    playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                    isOnGround = false;
+                    dirtParticle.Stop();
+                    playerAnim.SetTrigger("Jump_trig");
+                }
             }
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && !gameOver)
         {
             isOnGround = true;
             dirtParticle.Play();

@@ -13,8 +13,8 @@ public class SpawnManager : MonoBehaviour
     private float yPos = 0.0f;
     private float xEnemySpawnRange = 8.0f;
 
-    private float enemySpawnTime = 2.0f;
-    private float enemyDelay = 2.0f;
+    private float enemySpawnTime = 1.0f;
+    private float enemyDelay = 1.0f;
 
 
     void Start()
@@ -33,7 +33,7 @@ public class SpawnManager : MonoBehaviour
         {
             case 0:
                 xRandom = 0;
-                yPos = 0.5f;
+                yPos = 0.25f;
                 break;
             case 1:
                 xRandom = Random.Range(-xEnemySpawnRange + 2, xEnemySpawnRange - 2);
@@ -47,7 +47,7 @@ public class SpawnManager : MonoBehaviour
         
         Vector3 spawnPos = new Vector3(xRandom, yPos, zSpawn);
 
-        if (playerControllerScript.gameOver == false)
+        if (!playerControllerScript.gameOver)
         {
             Instantiate(enemies[randomIndex], spawnPos, enemies[randomIndex].transform.rotation);
         }
