@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     {
         if (!playerControllerScript.gameOver)
         {
-            transform.position = transform.position + Vector3.back * speed * Time.fixedDeltaTime;
+            transform.position = transform.position + Vector3.back * speed * Time.deltaTime;
         }
 
         if(transform.position.z < zDestroy)

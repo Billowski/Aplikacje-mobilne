@@ -6,7 +6,7 @@ public class RepeatRoad : MonoBehaviour
 {
     private Vector3 startPos;
     private float repeatWidth = 28.0f;
-    private float speed = 10;
+    private float speed = 10.0f;
 
     private PlayerController playerControllerScript;
     void Start()

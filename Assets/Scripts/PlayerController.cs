@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,8 +10,14 @@ public class PlayerController : MonoBehaviour
 
     public ParticleSystem dirtParticle;
 
+    public Text gameOverText;
+    public Button homeButton;
+    public Button highScoreButton;
+    public Button retryButton;
+    
     private bool isOnGround = true;
 
+    private GameManager gameManager;
     private Rigidbody playerRb;
     private Animator playerAnim;
     private Touch touch;
@@ -20,6 +28,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerRb = GetComponent<Rigidbody>();
         playerAnim = GetComponent<Animator>();
     }
@@ -51,6 +60,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void GameOver()
+    {
+        gameOver = true;
+        gameOverText.gameObject.SetActive(true);
+        homeButton.gameObject.SetActive(true);
+        highScoreButton.gameObject.SetActive(true);
+        retryButton.gameObject.SetActive(true);
+        MainManager.Instance.SaveHighscore();
+    }
+
+
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground") && !gameOver)
@@ -60,7 +81,7 @@ public class PlayerController : MonoBehaviour
         }
         if(collision.gameObject.CompareTag("Enemy"))
         {
-            gameOver = true;
+            GameOver();
             dirtParticle.Stop();
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
